@@ -20,5 +20,5 @@ provider "azurerm" {
 
 variable "rg-name" {
   type    = string
-  default = "kml_rg_main-397925e0759649f7"
+  default = "kml_rg_main-461bfad89281479c"
 }
