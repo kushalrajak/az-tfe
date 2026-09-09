@@ -111,39 +111,3 @@ resource "azurerm_subnet_network_security_group_association" "nsg-associate" {
   network_security_group_id = azurerm_network_security_group.dcvmnsg.id
   subnet_id                 = azurerm_subnet.dc-default.id
 }
-
-resource "azurerm_virtual_machine_extension" "create_ad_forest" {
-  name                 = "Create-ActiveDirectory-Forest"
-  virtual_machine_id   = azurerm_windows_virtual_machine.dcvm.id   # ← your VM name
-  publisher            = "Microsoft.Compute"
-  type                 = "CustomScriptExtension"
-  type_handler_version = "1.10"
-
-  # Public settings - can be empty or used for non-sensitive data
-  settings = jsonencode({
-    "timestamp" = timestamp()   # Helps force re-run if you update the script
-  })
-
-  # Protected settings - contains the actual command with password
-  protected_settings = jsonencode({
-    "commandToExecute" = "powershell.exe -ExecutionPolicy Unrestricted -Command \"${local.powershell_command}\""
-  })
-
-  timeouts {
-    create  = "2h"     # Important for AD DS forest creation
-    update  = "30m"
-    delete  = "30m"
-  }
-
-  depends_on = [azurerm_windows_virtual_machine.dcvm]
-}
-
-locals {
-  domain_name    = "kush.local"          # Change as needed
-  netbios_name   = "kush"
-  safe_mode_pass = "YourVeryStrongP@ssw0rd123!"   # ← Use Terraform variable in production!
-
-  powershell_command = <<EOT
-    Install-WindowsFeature -Name AD-Domain-Services, DNS -IncludeManagementTools
-  EOT
-}
