@@ -10,7 +10,7 @@ resource "azurerm_public_ip" "bastion-pip" {
   resource_group_name = var.rg-name
   location            = var.rg-loc
   allocation_method   = "Static"
-  sku                 = "Basic"
+  sku                 = "Standard"
 }
 
 resource "azurerm_bastion_host" "az-bastion" {
