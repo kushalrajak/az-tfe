@@ -91,6 +91,17 @@ resource "azurerm_network_security_group" "winvmnsg" {
     priority                   = "1500"
     direction                  = "Outbound"
   }
+  security_rule {
+    name                       = "Allow-Internet"
+    source_address_prefix      = "*"
+    destination_address_prefix = "Internet"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    protocol                   = "*"
+    access                     = "Allow"
+    priority                   = "4093"
+    direction                  = "Outbound"
+  }
 }
 
 resource "azurerm_windows_virtual_machine" "winvm" {
